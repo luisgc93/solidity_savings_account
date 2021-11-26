@@ -74,7 +74,7 @@ def test_cannot_withdraw_if_target_date_is_in_the_future_and_current_eth_price_i
     new_price = savings_account_contract.getLatestPrice() - 1000
     get_contract("eth_usd_price_feed").updateAnswer(new_price)
 
-    with pytest.raises(VirtualMachineError) as e:
+    with pytest.raises(VirtualMachineError):
         savings_account_contract.withdraw()
 
 
