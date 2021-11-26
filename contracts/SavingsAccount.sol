@@ -2,10 +2,11 @@
 
 pragma solidity >=0.8 <0.9.0;
 
+import "./PriceFeedConsumer.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 
-contract SavingsAccount { // is PriceFeedConsumer ?
+contract SavingsAccount is PriceFeedConsumer {
 
     address public owner;
     uint256 public currentDate;
@@ -13,13 +14,11 @@ contract SavingsAccount { // is PriceFeedConsumer ?
     uint256 public currentEthPrice;
     uint256 public ethBreakEvenPrice = 0;
     uint256 public fundsCounter; // count how many times the contract has been funded
-    AggregatorV3Interface public priceFeed;
     event ValueReceived(address user, uint256 amount, uint256 totalBalance);
 
 
-    constructor(address _priceFeed, uint256 _targetDate) {
+    constructor(address _priceFeed, uint256 _targetDate) PriceFeedConsumer(_priceFeed) {
         owner = msg.sender;
-        priceFeed = AggregatorV3Interface(_priceFeed);
         currentDate = block.timestamp;
         currentEthPrice = getPrice();
         require(_targetDate > currentDate);
