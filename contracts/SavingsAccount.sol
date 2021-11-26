@@ -27,7 +27,7 @@ contract SavingsAccount is PriceFeedConsumer {
     receive () external payable {
         fundsCounter++;
         currentEthPrice = uint256(getLatestPrice());
-        ethBreakEvenPrice = ethBreakEvenPrice + currentEthPrice / fundsCounter;
+        ethBreakEvenPrice = (ethBreakEvenPrice + currentEthPrice) / fundsCounter;
     }
 
     function withdraw() public payable {
