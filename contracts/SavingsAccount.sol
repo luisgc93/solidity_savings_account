@@ -20,7 +20,7 @@ contract SavingsAccount is PriceFeedConsumer {
     constructor(address _priceFeed, uint256 _targetDate) PriceFeedConsumer(_priceFeed) {
         owner = msg.sender;
         currentDate = block.timestamp;
-        currentEthPrice = getPrice();
+        currentEthPrice = uint256(getLatestPrice());
         require(_targetDate > currentDate);
         targetDate = _targetDate;
     }
@@ -29,18 +29,13 @@ contract SavingsAccount is PriceFeedConsumer {
     receive () external payable {
         emit ValueReceived(msg.sender, msg.value, address(this).balance);
         fundsCounter++;
-        currentEthPrice = getPrice();
+        currentEthPrice = uint256(getLatestPrice());
         ethBreakEvenPrice = ethBreakEvenPrice + currentEthPrice / fundsCounter;
-    }
-
-    function getPrice() public view returns (uint256) {
-        (, int256 price, , , ) = priceFeed.latestRoundData();
-        return uint256(price * 10_000_000_000);
     }
 
     function withdraw() public payable {
         require(msg.sender == owner);
-        currentEthPrice = getPrice();
+        currentEthPrice = uint256(getLatestPrice());
         currentDate = block.timestamp;
         require(currentEthPrice >= ethBreakEvenPrice || currentDate >= targetDate);
         payable(owner).transfer(address(this).balance);
