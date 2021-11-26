@@ -7,7 +7,7 @@ def deploy_savings_account(target_date_timestamp):
         deploy_mocks()
         price_feed_address = MockV3Aggregator[-1].address
     else:
-        price_feed_address = config[network.show_active()]["eth_usd_price_feed"]
+        price_feed_address = config["networks"][network.show_active()]["eth_usd_price_feed"]
 
     savings_account = SavingsAccount.deploy(
         price_feed_address,
