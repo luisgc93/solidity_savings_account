@@ -18,10 +18,19 @@ def test_can_deploy_if_target_date_is_in_the_future():
         pytest.skip()
     target_date_in_unix = time.time() + 1000
     savings_account_contract = deploy_savings_account(target_date_in_unix)
+    
     assert savings_account_contract.owner() == get_account().address
 
 def test_updates_contract_balance_and_eth_break_even_price_when_funded():
-    pass
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip()
+    target_date_in_unix = time.time() + 1000
+    account = get_account()
+    savings_account_contract = deploy_savings_account(target_date_in_unix)
+    
+    account.transfer(savings_account_contract.address, "1 ether")
+    assert savings_account_contract.balance() == 10**18
+
 
 def test_cannot_withdraw_if_target_date_is_in_the_future_and_current_eth_price_is_lt_break_even_price():
     pass
