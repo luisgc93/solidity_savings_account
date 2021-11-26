@@ -1,6 +1,10 @@
 dependencies:
   - smartcontractkit/chainlink-brownie-contracts@0.2.2
-# automatically fetch contract sources from Etherscan
+compiler:
+  solc:
+    remappings:
+      - '@chainlink=smartcontractkit/chainlink-brownie-contracts@0.2.2'
+  # automatically fetch contract sources from Etherscan
 autofetch_sources: True
 dotenv: .env
 # set a custom mnemonic for the development network
