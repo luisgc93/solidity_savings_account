@@ -13,7 +13,6 @@ contract SavingsAccount is PriceFeedConsumer {
     uint256 public currentEthPrice;
     uint256 public ethBreakEvenPrice = 0;
     uint256 public fundsCounter; // count how many times the contract has been funded
-    event ValueReceived(address user, uint256 amount, uint256 totalBalance);
 
 
     constructor(address _priceFeed, uint256 _targetDate) PriceFeedConsumer(_priceFeed) {
@@ -26,7 +25,6 @@ contract SavingsAccount is PriceFeedConsumer {
 
     // Anyone can fund the contract
     receive () external payable {
-        emit ValueReceived(msg.sender, msg.value, address(this).balance);
         fundsCounter++;
         currentEthPrice = uint256(getLatestPrice());
         ethBreakEvenPrice = ethBreakEvenPrice + currentEthPrice / fundsCounter;
