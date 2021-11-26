@@ -21,6 +21,6 @@ def test_transfers_and_withdraws_funds_when_conditions_are_valid():
 
     future_date = target_date + timedelta(days=1)
     with freeze_time(future_date.isoformat()):
-        savings_account_contract.withdraw()
+        savings_account_contract.withdraw({"from": account})
 
         assert savings_account_contract.balance() == 0

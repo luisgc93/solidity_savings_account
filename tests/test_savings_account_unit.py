@@ -74,7 +74,7 @@ def test_cannot_withdraw_if_target_date_is_in_the_future_and_current_eth_price_i
     get_contract("eth_usd_price_feed").updateAnswer(new_price)
 
     with pytest.raises(VirtualMachineError):
-        savings_account_contract.withdraw()
+        savings_account_contract.withdraw({"from": account})
 
 
 def test_can_withdraw_if_target_date_is_in_the_past():
@@ -89,7 +89,7 @@ def test_can_withdraw_if_target_date_is_in_the_past():
 
     future_date = target_date + timedelta(days=1)
     with freeze_time(future_date.isoformat()):
-        savings_account_contract.withdraw()
+        savings_account_contract.withdraw({"from": account})
 
         assert savings_account_contract.balance() == 0
 
@@ -103,6 +103,6 @@ def test_can_withdraw_if_current_eth_price_is_gt_break_even_price():
 
     tx = account.transfer(savings_account_contract.address, "1 ether")
     tx.wait(1)
-    savings_account_contract.withdraw()
+    savings_account_contract.withdraw({"from": account})
 
     assert savings_account_contract.balance() == 0
