@@ -1,3 +1,4 @@
 eth-brownie
 python-dotenv
 pytest
+freezegun
