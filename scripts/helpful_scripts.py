@@ -69,9 +69,6 @@ def get_contract(contract_name):
 
 
 def deploy_mocks(decimals=DECIMALS, initial_value=INITIAL_VALUE):
-    """
-    Use this script if you want to deploy mocks to a testnet
-    """
     print(f"The active network is {network.show_active()}")
     print("Deploying Mocks...")
     account = get_account()
