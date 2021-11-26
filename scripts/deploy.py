@@ -22,6 +22,7 @@ def deploy_savings_account(target_date_timestamp):
         price_feed_address,
         target_date_timestamp,
         {"from": account},
+        publish_source=config["networks"][network.show_active()].get("verify", False),
     )
 
     print(f"Contract deployed to {savings_account.address}")
