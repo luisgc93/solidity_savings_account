@@ -1,4 +1,4 @@
-# Solidity Savings Account
+# Solidity Savings Account 💰
 
 A simple savings account smart contract. Features:
 
