@@ -30,7 +30,7 @@ def test_can_deploy_if_target_date_is_in_the_future():
     assert savings_account_contract.owner() == get_account().address
 
 
-def test_updates_contract_balance_and_eth_break_even_price_when_funded():
+def test_updates_contract_balance_and_break_even_price_when_funded():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
     target_date = datetime.now() + timedelta(days=15)
@@ -41,9 +41,10 @@ def test_updates_contract_balance_and_eth_break_even_price_when_funded():
     tx.wait(1)
 
     assert savings_account_contract.balance() == 10 ** 18
+    assert savings_account_contract.ethBreakEvenPrice() == 2000 * 10**18
 
 
-def test_updates_eth_break_even_price_when_funded_multiple_times_at_different_prices():
+def test_updates_break_even_price_when_funded_multiple_times_at_different_prices():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
     target_date = datetime.now() + timedelta(days=15)
@@ -57,8 +58,8 @@ def test_updates_eth_break_even_price_when_funded_multiple_times_at_different_pr
     tx = account.transfer(savings_account_contract.address, "1 ether")
     tx.wait(1)
 
-    new_expected_break_even_price = 1500 * 10**18 
-    assert savings_account_contract.ethBreakEvenPrice() == new_expected_break_even_price
+    new_expected_avg_price = 1500 * 10**18 
+    assert savings_account_contract.ethBreakEvenPrice() == new_expected_avg_price
 
 def test_cannot_withdraw_if_target_date_is_in_the_future_and_current_eth_price_is_not_gt_break_even_price():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
