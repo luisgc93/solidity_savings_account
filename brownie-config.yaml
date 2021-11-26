@@ -27,4 +27,3 @@ networks:
     verify: True
 wallets:
   from_key: ${PRIVATE_KEY}
-  from_mnemonic: ${MNEMONIC}
