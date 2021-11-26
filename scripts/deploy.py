@@ -1,7 +1,8 @@
+from datetime import datetime, timedelta
 from brownie import config, network, MockV3Aggregator, SavingsAccount
 from scripts.helpful_scripts import LOCAL_BLOCKCHAIN_ENVIRONMENTS, deploy_mocks, get_account
 
-def deploy_savings_account(target_date_in_unix: int):
+def deploy_savings_account(target_date_timestamp):
     if network.show_active() in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         deploy_mocks()
         price_feed_address = MockV3Aggregator[-1].address
@@ -10,7 +11,7 @@ def deploy_savings_account(target_date_in_unix: int):
 
     savings_account = SavingsAccount.deploy(
         price_feed_address,
-        target_date_in_unix,
+        target_date_timestamp,
         {"from": get_account()}
     )
 
@@ -19,4 +20,5 @@ def deploy_savings_account(target_date_in_unix: int):
 
 
 def main():
-    deploy_savings_account()
+    target_date = datetime.now() + timedelta(days=365)
+    deploy_savings_account(target_date.timestamp())
