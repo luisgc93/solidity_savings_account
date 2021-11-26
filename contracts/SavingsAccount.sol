@@ -12,7 +12,8 @@ contract SavingsAccount is PriceFeedConsumer {
     uint256 public targetDate;
     uint256 public currentEthPrice;
     uint256 public ethBreakEvenPrice = 0;
-    uint256 public fundsCounter; // count how many times the contract has been funded
+    uint256[] public pricesFunded;
+    uint256[] public valuesFunded;
 
 
     constructor(address _priceFeed, uint256 _targetDate) PriceFeedConsumer(_priceFeed) {
@@ -25,12 +26,24 @@ contract SavingsAccount is PriceFeedConsumer {
 
     // Anyone can fund the contract
     receive () external payable {
-        fundsCounter++;
         currentEthPrice = uint256(getLatestPrice());
-        ethBreakEvenPrice = (ethBreakEvenPrice + currentEthPrice) / fundsCounter;
+        pricesFunded.push(currentEthPrice);
+        valuesFunded.push(msg.value);
+        calculateEthBEP();
     }
 
-    function withdraw() public payable {
+  
+  function calculateEthBEP() public {
+      // BEP = SUM(amount * price)/balance
+      require(pricesFunded.length == valuesFunded.length);
+      uint256 valueTimesPriceSum = 0;
+      for (uint256 i=0; i < pricesFunded.length ; i++) {
+          valueTimesPriceSum += valuesFunded[i] * pricesFunded[i];
+        }
+        ethBreakEvenPrice = valueTimesPriceSum/address(this).balance;
+  }
+  
+  function withdraw() public payable {
         require(msg.sender == owner);
         currentEthPrice = uint256(getLatestPrice());
         currentDate = block.timestamp;
