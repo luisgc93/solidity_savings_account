@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from freezegun.api import _freeze_time
+from freezegun import freeze_time
 import pytest
 import time
 from brownie import network
@@ -20,7 +20,7 @@ def test_transfers_and_withdraws_funds_when_conditions_are_valid():
     assert savings_account_contract.balance() == 1000_000_000
 
     future_date = target_date + timedelta(days=1)
-    with _freeze_time(future_date.isoformat()):
+    with freeze_time(future_date.isoformat()):
         savings_account_contract.withdraw()
 
         assert savings_account_contract.balance() == 0
