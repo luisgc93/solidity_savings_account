@@ -1,5 +1,4 @@
 import pytest
-import time
 from freezegun import freeze_time
 from datetime import datetime, timedelta
 from brownie import network
@@ -15,18 +14,18 @@ from scripts.deploy import deploy_savings_account
 def test_cannot_deploy_if_target_date_is_in_the_past():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date_timestamp = time.time() - 1000
+    target_date = datetime.now() - timedelta(days=15)
 
     with pytest.raises(VirtualMachineError):
-        deploy_savings_account(target_date_timestamp)
+        deploy_savings_account(target_date.timestamp())
 
 
 def test_can_deploy_if_target_date_is_in_the_future():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date_timestamp = time.time() + 1000
+    target_date = datetime.now() + timedelta(days=15)
 
-    savings_account_contract = deploy_savings_account(target_date_timestamp)
+    savings_account_contract = deploy_savings_account(target_date.timestamp())
 
     assert savings_account_contract.owner() == get_account().address
 
@@ -34,9 +33,9 @@ def test_can_deploy_if_target_date_is_in_the_future():
 def test_updates_contract_balance_and_eth_break_even_price_when_funded():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date_timestamp = time.time() + 1000
+    target_date = datetime.now() + timedelta(days=15)
     account = get_account()
-    savings_account_contract = deploy_savings_account(target_date_timestamp)
+    savings_account_contract = deploy_savings_account(target_date.timestamp())
 
     tx = account.transfer(savings_account_contract.address, "1 ether")
     tx.wait(1)
@@ -47,9 +46,9 @@ def test_updates_contract_balance_and_eth_break_even_price_when_funded():
 def test_updates_eth_break_even_price_when_funded_multiple_times_at_different_prices():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date_timestamp = time.time() + 1000
+    target_date = datetime.now() + timedelta(days=15)
     account = get_account()
-    savings_account_contract = deploy_savings_account(target_date_timestamp)
+    savings_account_contract = deploy_savings_account(target_date.timestamp())
 
     tx = account.transfer(savings_account_contract.address, "1 ether")
     tx.wait(1)
@@ -64,9 +63,9 @@ def test_updates_eth_break_even_price_when_funded_multiple_times_at_different_pr
 def test_cannot_withdraw_if_target_date_is_in_the_future_and_current_eth_price_is_not_gt_break_even_price():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date_timestamp = time.time() + 1000
+    target_date = datetime.now() + timedelta(days=15)
     account = get_account()
-    savings_account_contract = deploy_savings_account(target_date_timestamp)
+    savings_account_contract = deploy_savings_account(target_date.timestamp())
 
     tx = account.transfer(savings_account_contract.address, "1 ether")
     tx.wait(1)
@@ -81,14 +80,14 @@ def test_cannot_withdraw_if_target_date_is_in_the_future_and_current_eth_price_i
 def test_can_withdraw_if_target_date_is_in_the_past():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date_timestamp = time.time() + 1000
+    target_date = datetime.now() + timedelta(days=15)
     account = get_account()
-    savings_account_contract = deploy_savings_account(target_date_timestamp)
+    savings_account_contract = deploy_savings_account(target_date.timestamp())
 
     tx = account.transfer(savings_account_contract.address, "1 ether")
     tx.wait(1)
 
-    future_date = datetime.now() + timedelta(days=30)
+    future_date = target_date + timedelta(days=1)
     with freeze_time(future_date.isoformat()):
         savings_account_contract.withdraw()
 
@@ -98,9 +97,9 @@ def test_can_withdraw_if_target_date_is_in_the_past():
 def test_can_withdraw_if_current_eth_price_is_gt_break_even_price():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date_timestamp = time.time() + 1000
+    target_date = datetime.now() + timedelta(days=15)
     account = get_account()
-    savings_account_contract = deploy_savings_account(target_date_timestamp)
+    savings_account_contract = deploy_savings_account(target_date.timestamp())
 
     tx = account.transfer(savings_account_contract.address, "1 ether")
     tx.wait(1)
