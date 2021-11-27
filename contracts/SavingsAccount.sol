@@ -47,7 +47,7 @@ contract SavingsAccount is PriceFeedConsumer {
         require(msg.sender == owner);
         currentEthPrice = uint256(getLatestPrice());
         currentDate = block.timestamp;
-        require(currentEthPrice >= ethBreakEvenPrice || currentDate >= targetDate);
+        require(currentEthPrice > ethBreakEvenPrice || currentDate >= targetDate);
         payable(owner).transfer(address(this).balance);
     }
 }
