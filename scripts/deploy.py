@@ -1,5 +1,11 @@
 from datetime import datetime, timedelta
-from brownie import config, network, MockV3Aggregator, SavingsAccount, SavingsAccountMock
+from brownie import (
+    config,
+    network,
+    MockV3Aggregator,
+    SavingsAccount,
+    SavingsAccountMock,
+)
 from scripts.helpful_scripts import (
     LOCAL_BLOCKCHAIN_ENVIRONMENTS,
     deploy_mocks,
@@ -28,12 +34,13 @@ def deploy_savings_account(target_date_timestamp):
     print(f"Contract deployed to {savings_account.address}")
     return savings_account
 
+
 def deploy_savings_account_mock(target_date_timestamp):
     # for testing purposes
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         print("This should only be used in a development network. Exiting")
         return
-    
+
     deploy_mocks()
     price_feed_address = MockV3Aggregator[-1].address
     account = get_account()

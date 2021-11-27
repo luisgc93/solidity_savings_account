@@ -33,11 +33,13 @@ def test_updates_contract_balance_and_break_even_price_when_funded(target_date):
     tx.wait(1)
 
     assert savings_account_contract.balance() == 10 ** 18
-    assert savings_account_contract.ethBreakEvenPrice() == 2000 * 10**18
+    assert savings_account_contract.ethBreakEvenPrice() == 2000 * 10 ** 18
 
 
 @dev_only
-def test_updates_break_even_price_when_funded_multiple_times_at_different_prices(target_date):
+def test_updates_break_even_price_when_funded_multiple_times_at_different_prices(
+    target_date,
+):
     account = get_account()
     savings_account_contract = deploy_savings_account(target_date.timestamp())
 
@@ -48,11 +50,14 @@ def test_updates_break_even_price_when_funded_multiple_times_at_different_prices
     tx = account.transfer(savings_account_contract.address, "1 ether")
     tx.wait(1)
 
-    new_expected_avg_price = 1500 * 10**18 
+    new_expected_avg_price = 1500 * 10 ** 18
     assert savings_account_contract.ethBreakEvenPrice() == new_expected_avg_price
 
+
 @dev_only
-def test_cannot_withdraw_if_target_date_is_in_the_future_and_current_eth_price_is_not_gt_break_even_price(target_date):
+def test_cannot_withdraw_if_target_date_is_in_the_future_and_current_eth_price_is_not_gt_break_even_price(
+    target_date,
+):
     account = get_account()
     savings_account_contract = deploy_savings_account(target_date.timestamp())
 
@@ -90,7 +95,7 @@ def test_can_withdraw_if_current_eth_price_is_gt_break_even_price(target_date):
     tx.wait(1)
     new_price = savings_account_contract.getLatestPrice() + 1000
     get_contract("eth_usd_price_feed").updateAnswer(new_price)
-    
+
     savings_account_contract.withdraw({"from": account})
 
     assert savings_account_contract.balance() == 0
