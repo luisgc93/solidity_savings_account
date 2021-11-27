@@ -1,5 +1,4 @@
 import pytest
-from freezegun import freeze_time
 from datetime import datetime, timedelta
 from brownie import network
 from brownie.exceptions import VirtualMachineError
@@ -8,7 +7,7 @@ from scripts.helpful_scripts import (
     get_account,
     get_contract,
 )
-from scripts.deploy import deploy_savings_account
+from scripts.deploy import deploy_savings_account, deploy_savings_account_mock
 
 
 def test_cannot_deploy_if_target_date_is_in_the_past():
@@ -83,16 +82,16 @@ def test_can_withdraw_if_target_date_is_in_the_past():
         pytest.skip()
     target_date = datetime.now() + timedelta(days=15)
     account = get_account()
-    savings_account_contract = deploy_savings_account(target_date.timestamp())
+    savings_account_contract = deploy_savings_account_mock(target_date.timestamp())
 
     tx = account.transfer(savings_account_contract.address, "1 ether")
     tx.wait(1)
 
     future_date = target_date + timedelta(days=1)
-    with freeze_time(future_date.isoformat()):
-        savings_account_contract.withdraw({"from": account})
+    savings_account_contract.setCurrentDate(future_date.timestamp())
+    savings_account_contract.withdraw({"from": account})
 
-        assert savings_account_contract.balance() == 0
+    assert savings_account_contract.balance() == 0
 
 
 def test_can_withdraw_if_current_eth_price_is_gt_break_even_price():
