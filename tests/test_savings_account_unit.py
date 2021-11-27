@@ -1,6 +1,5 @@
 import pytest
 from datetime import datetime, timedelta
-from brownie import network
 from brownie.exceptions import VirtualMachineError
 from conftest import dev_only
 from scripts.helpful_scripts import (
