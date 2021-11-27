@@ -104,6 +104,9 @@ def test_can_withdraw_if_current_eth_price_is_gt_break_even_price():
 
     tx = account.transfer(savings_account_contract.address, "1 ether")
     tx.wait(1)
+    new_price = savings_account_contract.getLatestPrice() + 1000
+    get_contract("eth_usd_price_feed").updateAnswer(new_price)
+    
     savings_account_contract.withdraw({"from": account})
 
     assert savings_account_contract.balance() == 0
