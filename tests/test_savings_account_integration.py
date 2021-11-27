@@ -7,10 +7,9 @@ from scripts.deploy import deploy_savings_account
 from scripts.helpful_scripts import LOCAL_BLOCKCHAIN_ENVIRONMENTS, get_account
 
 
-def test_transfers_and_withdraws_funds_when_conditions_are_valid():
+def test_transfers_and_withdraws_funds_when_conditions_are_valid(target_date):
     if network.show_active() in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date = datetime.now() + timedelta(days=15)
     account = get_account()
     savings_account_contract = deploy_savings_account(target_date.timestamp())
 

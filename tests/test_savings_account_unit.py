@@ -10,6 +10,7 @@ from scripts.helpful_scripts import (
 from scripts.deploy import deploy_savings_account, deploy_savings_account_mock
 
 
+
 def test_cannot_deploy_if_target_date_is_in_the_past():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
@@ -19,20 +20,18 @@ def test_cannot_deploy_if_target_date_is_in_the_past():
         deploy_savings_account(target_date.timestamp())
 
 
-def test_can_deploy_if_target_date_is_in_the_future():
+def test_can_deploy_if_target_date_is_in_the_future(target_date):
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date = datetime.now() + timedelta(days=15)
 
     savings_account_contract = deploy_savings_account(target_date.timestamp())
 
     assert savings_account_contract.owner() == get_account().address
 
 
-def test_updates_contract_balance_and_break_even_price_when_funded():
+def test_updates_contract_balance_and_break_even_price_when_funded(target_date):
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date = datetime.now() + timedelta(days=15)
     account = get_account()
     savings_account_contract = deploy_savings_account(target_date.timestamp())
 
@@ -43,10 +42,9 @@ def test_updates_contract_balance_and_break_even_price_when_funded():
     assert savings_account_contract.ethBreakEvenPrice() == 2000 * 10**18
 
 
-def test_updates_break_even_price_when_funded_multiple_times_at_different_prices():
+def test_updates_break_even_price_when_funded_multiple_times_at_different_prices(target_date):
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date = datetime.now() + timedelta(days=15)
     account = get_account()
     savings_account_contract = deploy_savings_account(target_date.timestamp())
 
@@ -60,10 +58,9 @@ def test_updates_break_even_price_when_funded_multiple_times_at_different_prices
     new_expected_avg_price = 1500 * 10**18 
     assert savings_account_contract.ethBreakEvenPrice() == new_expected_avg_price
 
-def test_cannot_withdraw_if_target_date_is_in_the_future_and_current_eth_price_is_not_gt_break_even_price():
+def test_cannot_withdraw_if_target_date_is_in_the_future_and_current_eth_price_is_not_gt_break_even_price(target_date):
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date = datetime.now() + timedelta(days=15)
     account = get_account()
     savings_account_contract = deploy_savings_account(target_date.timestamp())
 
@@ -77,10 +74,9 @@ def test_cannot_withdraw_if_target_date_is_in_the_future_and_current_eth_price_i
         savings_account_contract.withdraw({"from": account})
 
 
-def test_can_withdraw_if_target_date_is_in_the_past():
+def test_can_withdraw_if_target_date_is_in_the_past(target_date):
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date = datetime.now() + timedelta(days=15)
     account = get_account()
     savings_account_contract = deploy_savings_account_mock(target_date.timestamp())
 
@@ -94,10 +90,9 @@ def test_can_withdraw_if_target_date_is_in_the_past():
     assert savings_account_contract.balance() == 0
 
 
-def test_can_withdraw_if_current_eth_price_is_gt_break_even_price():
+def test_can_withdraw_if_current_eth_price_is_gt_break_even_price(target_date):
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
-    target_date = datetime.now() + timedelta(days=15)
     account = get_account()
     savings_account_contract = deploy_savings_account(target_date.timestamp())
 
